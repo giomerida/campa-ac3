@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oferta Educativa - Alexis Asesor Acádemico</title>
+    <title>Oferta Educativa - Corporativo Riec</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -53,14 +53,39 @@
                 <span class="font-medium text-slate-300">Modo Vendedor: <strong id="lblActiveAdvisor" class="text-brand-accent">Cargando...</strong></span>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="toggleConfigPanel()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded border border-slate-700 transition duration-200">
-                    <i class="fa-solid fa-user-gear mr-1"></i> Configurar Mi Enlace
+                <button onclick="handleConfigAccess()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1 rounded border border-slate-700 transition duration-200 flex items-center gap-1">
+                    <i class="fa-solid fa-lock text-[10px] text-brand-accent"></i> Configurar Mi Enlace
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- PANEL DE CONFIGURACIÓN OCULTO -->
+    <!-- MODAL DE CONTRASEÑA DE SEGURIDAD (Protección Oculta) -->
+    <div id="passwordModal" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white text-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 transform transition-all text-center">
+            <div class="w-12 h-12 rounded-full bg-brand-100 text-brand-500 flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-shield-halved text-xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-brand-900 mb-1">Acceso Restringido</h3>
+            <p class="text-xs text-slate-500 mb-4">Ingresa la contraseña de seguridad para configurar los datos de enlace comercial.</p>
+            
+            <form onsubmit="submitAccessPassword(event)" class="space-y-3">
+                <div>
+                    <input type="password" id="inputAccessPassword" required class="w-full px-3 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm text-center font-mono tracking-widest" placeholder="••••••••">
+                </div>
+                <div class="flex space-x-2 pt-2">
+                    <button type="submit" class="flex-1 bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2 px-4 rounded-xl transition text-xs">
+                        Verificar Clave
+                    </button>
+                    <button type="button" onclick="closePasswordModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-xl transition text-xs">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PANEL DE CONFIGURACIÓN DE DATOS (CON SEGURIDAD ADQUIRIDA) -->
     <div id="configPanel" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white text-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
             <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
@@ -72,17 +97,22 @@
                 </button>
             </div>
             <p class="text-slate-600 text-sm mb-4">
-                Personaliza esta landing page con tus datos para que los leads te lleguen directamente a tu WhatsApp. ¡Los cambios se guardan automáticamente!
+                Personaliza esta landing page con tus datos para que los leads te lleguen directamente a tu WhatsApp. ¡Los cambios se guardan en este dispositivo!
             </p>
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nombre del Asesor</label>
-                    <input type="text" id="inputAdvisorName" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm" placeholder="Ej. Lic. Carlos Mendoza">
+                    <input type="text" id="inputAdvisorName" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm" placeholder="Ej. Lic. Alexis Mérida">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">WhatsApp del Asesor (Con Código de País sin + ni espacios)</label>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">WhatsApp del Asesor (Código de País sin + ni espacios)</label>
                     <input type="text" id="inputAdvisorPhone" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm" placeholder="Ej. 5215512345678">
                     <p class="text-[10px] text-slate-400 mt-1">Escribe ej: <span class="font-mono">521...</span> para México, <span class="font-mono">573...</span> para Colombia.</p>
+                </div>
+                <div class="pt-2 border-t border-slate-100">
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nueva Contraseña del Menú</label>
+                    <input type="password" id="inputAdvisorPassword" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm" placeholder="Define una contraseña nueva para proteger este menú">
+                    <p class="text-[10px] text-slate-400 mt-1">Si la dejas en blanco, se conservará la contraseña actual.</p>
                 </div>
             </div>
             <div class="mt-6 flex space-x-2">
@@ -110,8 +140,8 @@
                         <i class="fa-solid fa-graduation-cap text-2xl text-brand-accent"></i>
                     </div>
                     <div>
-                        <span class="block text-xs uppercase tracking-wider font-bold text-brand-accent">Corporativo RIEC</span>
-                        <span class="font-black text-xl tracking-tight">DIPLOMADOS <span class="font-light">Program+</span></span>
+                        <span class="block text-xs uppercase tracking-wider font-bold text-brand-accent">Desarrollo Profesional</span>
+                        <span class="font-black text-xl tracking-tight">CORPORATIVO <span class="font-light">RIEC</span></span>
                     </div>
                 </div>
                 
@@ -137,14 +167,14 @@
                         Eleva tu perfil profesional al <span class="text-brand-accent underline decoration-brand-accent/40 underline-offset-4">siguiente nivel</span>
                     </h1>
                     <p class="text-lg text-slate-200 font-light max-w-xl leading-relaxed">
-                        Explora nuestra nueva oferta de diplomados con certificación de alto nivel internacional. Programas diseñados por líderes de la industria para adquirir competencias altamente demandadas.
+                        Explora nuestra nueva oferta de diplomados con certificación de alto nivel internacional. Programas diseñados por líderes de la industria para adquirir competencias altamente demandadas en Corporativo Riec.
                     </p>
                     <div class="flex flex-wrap gap-4 pt-4">
                         <a href="#diplomados-section" class="bg-brand-accent hover:bg-amber-600 text-slate-900 font-bold px-8 py-4 rounded-xl shadow-lg shadow-brand-accent/20 transition-all-300 transform hover:-translate-y-1 flex items-center gap-2">
                             Ver Diplomados <i class="fa-solid fa-arrow-down"></i>
                         </a>
                         <a href="#workshop-section" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-xl border border-white/20 transition-all-300 backdrop-blur-md flex items-center gap-2">
-                            Workshop <i class="fa-solid fa-bolt text-brand-accent"></i>
+                            Workshop 2026 <i class="fa-solid fa-bolt text-brand-accent"></i>
                         </a>
                     </div>
                 </div>
@@ -200,12 +230,12 @@
     <!-- SECCIÓN DE NUESTROS 6 DIPLOMADOS -->
     <main id="diplomados-section" class="max-w-7xl mx-auto px-4 py-16 md:py-24 flex-grow">
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="text-xs font-bold uppercase text-brand-500 tracking-widest mb-3">CONOCE NUESTRA OFERTA</h2>
+            <h2 class="text-xs font-bold uppercase text-brand-500 tracking-widest mb-3">CONOCE NUESTRO PORTAFOLIO</h2>
             <p class="text-3xl md:text-4xl font-black text-brand-900 tracking-tight">
                 Nuestra Oferta Educativa de Diplomados
             </p>
             <p class="text-slate-600 mt-4 text-base font-light">
-                Programas estructurados de manera práctica e interactiva, ideales para adquirir destrezas competitivas en tiempo récord. Elige el tuyo y solicita información de costos y becas disponibles.
+                Programas estructurados de manera práctica e interactiva en Corporativo Riec, ideales para adquirir destrezas competitivas en tiempo récord. Elige el tuyo y solicita información de costos y becas disponibles.
             </p>
         </div>
 
@@ -344,7 +374,7 @@
                             Gestión de Proyectos Ágiles (Scrum & Kanban)
                         </h3>
                         <p class="text-slate-500 text-sm line-clamp-3 mb-4">
-                            Descubre cómo planificar, coordinar y entregar proyectos complejos con metodologías ágiles. Aprende el rol de Scrum Master y Product Owner en organizaciones competitivas globales.
+                            Descubre cómo planificar, coordinar y entregar proyectos complejos con metodologías ágiles. Aprende el rol de Scrum Master y Product Owner en organizaciones de alto rendimiento.
                         </p>
                     </div>
                     <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
@@ -398,11 +428,11 @@
                 <!-- Columna de Información -->
                 <div class="lg:col-span-6 space-y-6">
                     <div class="inline-flex items-center gap-2 bg-brand-accent/15 text-brand-accent px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-brand-accent/20">
-                        <i class="fa-solid fa-star"></i> Workshop CDMX  
+                        <i class="fa-solid fa-star"></i> Workshop Presencial
                     </div>
                     <h2 class="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-                        Workshop Exclusivo: <br>
-                        <span class="text-brand-accent">Inteligencia Artificial para Ventas B2B</span>
+                        Workshop 2026: <br>
+                        <span class="text-brand-accent">Neurodesarrollo e integración sensorial.</span>
                     </h2>
                     <p class="text-slate-300 text-base font-light leading-relaxed">
                         Aprende de manera completamente práctica cómo estructurar flujos comerciales automatizados, generar leads altamente calificados de forma orgánica utilizando IA y cerrar tratos con mayor velocidad.
@@ -413,36 +443,36 @@
                         <div class="flex items-start gap-3">
                             <span class="bg-white/10 text-brand-accent p-2 rounded-xl mt-0.5"><i class="fa-solid fa-calendar-day"></i></span>
                             <div>
-                                <h4 class="font-bold text-sm">Fechas Únicas</h4>
-                                <p class="text-xs text-slate-400">Sábado y Domingo, 5 y 6 de Septiembre de 2026</p>
+                                <h4 class="font-bold text-sm">Fechas</h4>
+                                <p class="text-xs text-slate-400">Sábado 5 y Domingo 6 de Septiembre de 2026</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="bg-white/10 text-brand-accent p-2 rounded-xl mt-0.5"><i class="fa-solid fa-clock"></i></span>
                             <div>
                                 <h4 class="font-bold text-sm">Duración</h4>
-                                <p class="text-xs text-slate-400">5 Horas presencial</p>
+                                <p class="text-xs text-slate-400">5 Horas</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="bg-white/10 text-brand-accent p-2 rounded-xl mt-0.5"><i class="fa-solid fa-user-instructor"></i></span>
                             <div>
                                 <h4 class="font-bold text-sm">Ponente Experto</h4>
-                                <p class="text-xs text-slate-400">Dra. Sunny Hidalgo.</p>
+                                <p class="text-xs text-slate-400">Dra. Sunny Hidalgo</p>
                             </div>
                         </div>
                         <div class="flex items-start gap-3">
                             <span class="bg-white/10 text-brand-accent p-2 rounded-xl mt-0.5"><i class="fa-solid fa-medal"></i></span>
                             <div>
                                 <h4 class="font-bold text-sm">Constancia</h4>
-                                <p class="text-xs text-slate-400">Certificación de asistencia</p>
+                                <p class="text-xs text-slate-400">Certificación de asistencia digital</p>
                             </div>
                         </div>
                     </div>
                     
                     <div class="pt-6">
                         <button onclick="requestWorkshopInfo()" class="bg-brand-accent hover:bg-amber-600 text-slate-900 font-bold px-8 py-4 rounded-xl shadow-lg shadow-brand-accent/10 transition-all-300 transform hover:-translate-y-0.5 inline-flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-ticket"></i> Consultar Acceso con tu Asesor
+                            <i class="fa-solid fa-ticket"></i> Consultar Acceso con Asesor
                         </button>
                     </div>
                 </div>
@@ -473,10 +503,10 @@
                         </div>
                         <div class="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
                             <div>
-                                <p class="text-xs text-slate-400">Inscripción General</p>
-                                <p class="text-lg font-bold text-brand-accent">$49 USD <span class="text-xs text-slate-400 line-through font-normal">$120 USD</span></p>
+                                <p class="text-xs text-slate-400">Inscripción</p>
+                                <p class="text-lg font-bold text-brand-accent">$6,300 MX <span class="text-xs text-slate-400 line-through font-normal">$7,400 MX</span></p>
                             </div>
-                            <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-bold">¡Gratis para Alumnos de Diplomados!</span>
+                            <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-bold">¡Precio hasta el 6 de Agosto!</span>
                         </div>
                     </div>
                 </div>
@@ -498,7 +528,7 @@
                     <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                 </div>
                 <p class="text-slate-600 text-sm italic mb-6">
-                    "El Diplomado en Agile me permitió liderar proyectos con bases sólidas y obtener un aumento salarial del 35% en solo seis meses. ¡La tutoría del asesor en la inscripción fue increíblemente profesional!"
+                    "El Diplomado en Agile de Corporativo Riec me permitió liderar proyectos con bases sólidas y obtener un aumento salarial del 35% en solo seis meses. ¡La tutoría de mi asesor Lic. Alexis Mérida en la inscripción fue increíblemente profesional!"
                 </p>
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">
@@ -515,7 +545,7 @@
                     <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                 </div>
                 <p class="text-slate-600 text-sm italic mb-6">
-                    "El enfoque práctico de IA para negocios me ahorró horas de trabajo diario en mi agencia. Es el único diplomado que realmente actualiza sus contenidos mes con mes."
+                    "El enfoque práctico de IA para negocios me ahorró horas de trabajo diario en mi agencia. Es el único corporativo que realmente actualiza sus contenidos de manera constante."
                 </p>
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">
@@ -532,7 +562,7 @@
                     <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                 </div>
                 <p class="text-slate-600 text-sm italic mb-6">
-                    "Altamente recomendado. El contenido de Marketing Digital va directo al grano, sin rodeos teóricos. El soporte y acceso inmediato son inigualables."
+                    "Altamente recomendado. El contenido de Marketing Digital va directo al grano, sin rodeos teóricos. El soporte y acceso inmediato que me brindaron son inigualables."
                 </p>
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs">
@@ -555,10 +585,10 @@
                     <div class="bg-brand-500 p-2 rounded-xl">
                         <i class="fa-solid fa-graduation-cap text-lg"></i>
                     </div>
-                    <span class="font-black text-lg tracking-tight">DIPLOMADOS <span class="font-light">ELITE</span></span>
+                    <span class="font-black text-lg tracking-tight">CORPORATIVO <span class="font-light">RIEC</span></span>
                 </div>
                 <p class="text-sm text-slate-400">
-                    Líderes globales en formación ejecutiva a distancia y certificaciones profesionales.
+                    Líderes globales en formación ejecutiva a distancia y certificaciones profesionales de alta gama.
                 </p>
             </div>
             
@@ -588,7 +618,7 @@
 
         <div class="max-w-7xl mx-auto px-4 pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
             <p>&copy; 2026 Corporativo Riec. Todos los derechos reservados.</p>
-            <p class="mt-2">Esta landing page es administrada y operada por Alexis Mérida.</p>
+            <p class="mt-2">Esta landing page es administrada y operada por un Asesor de Ventas Autorizado.</p>
         </div>
     </footer>
 
@@ -703,17 +733,19 @@
                 title: "Ciberseguridad & Protección de Datos",
                 category: "Seguridad Informática",
                 image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80",
-                desc: "El resguardo de la información es crítico para la supervivencia empresarial. Este programa introductorio y preventivo te enseñará a estructurar planes de seguridad informática, auditar vulnerabilidades críticas en la infraestructura, implementar lineamientos regulatorios internacionales de protección de datos (como RGPD) y capacitar efectivamente a los empleados para evitar ataques de Ingeniería Social y Phishing."
+                desc: "El resguardo de la información es crítico para la supervivencia empresarial. Este programa introductorio y preventivo te enseñará a registrar planes de seguridad informática, auditar vulnerabilidades críticas en la infraestructura, implementar lineamientos regulatorios internacionales de protección de datos (como RGPD) y capacitar efectivamente a los empleados para evitar ataques de Ingeniería Social y Phishing."
             }
         };
 
         // --- ASESOR DE VENTAS PREDETERMINADO ---
         const DEFAULT_ADVISOR = {
-            name: "Lic. Carlos Mendoza",
-            phone: "5215512345678" // Formato internacional (ej. México +52 1 55...)
+            name: "Lic. Alexis Mérida",
+            phone: "528337924094",
+            password: "elite2026"
         };
 
         let currentAdvisor = { ...DEFAULT_ADVISOR };
+        let isAuthorized = false; // Estado de sesión del asesor
 
         // --- SISTEMA DE PERSISTENCIA Y CARGA ---
         window.onload = function() {
@@ -724,14 +756,17 @@
         function loadAdvisorConfig() {
             const savedName = localStorage.getItem('advisor_name');
             const savedPhone = localStorage.getItem('advisor_phone');
+            const savedPassword = localStorage.getItem('advisor_password');
 
             if (savedName && savedPhone) {
                 currentAdvisor.name = savedName;
                 currentAdvisor.phone = savedPhone;
+                currentAdvisor.password = savedPassword || DEFAULT_ADVISOR.password;
             } else {
-                // Si no hay datos, guarda los por defecto
+                // Si no hay datos, guarda los predeterminados en localStorage
                 localStorage.setItem('advisor_name', DEFAULT_ADVISOR.name);
                 localStorage.setItem('advisor_phone', DEFAULT_ADVISOR.phone);
+                localStorage.setItem('advisor_password', DEFAULT_ADVISOR.password);
             }
         }
 
@@ -742,38 +777,91 @@
             document.getElementById('advisorMobileName').innerText = currentAdvisor.name;
             document.getElementById('footerAdvisorName').innerText = currentAdvisor.name;
 
-            // Rellenar inputs en el panel de config
+            // Rellenar inputs en el panel de configuración
             document.getElementById('inputAdvisorName').value = currentAdvisor.name;
             document.getElementById('inputAdvisorPhone').value = currentAdvisor.phone;
+            document.getElementById('inputAdvisorPassword').value = '';
 
             // Mostrar el badge del asesor
             document.getElementById('advisorBadge').classList.remove('hidden');
+        }
+
+        // --- COMPROBACIÓN DE ACCESO CON CONTRASEÑA ---
+        function handleConfigAccess() {
+            if (isAuthorized) {
+                // Si ya está autorizado en la sesión activa, abrimos directamente el panel
+                toggleConfigPanel();
+            } else {
+                // Si no, mostramos el modal de contraseña (sin pista visual)
+                openPasswordModal();
+            }
+        }
+
+        function openPasswordModal() {
+            document.getElementById('inputAccessPassword').value = '';
+            document.getElementById('passwordModal').classList.remove('hidden');
+            document.body.classList.add('modal-active');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+        }
+
+        function submitAccessPassword(event) {
+            event.preventDefault();
+            const inputVal = document.getElementById('inputAccessPassword').value.trim();
+
+            if (inputVal === currentAdvisor.password) {
+                isAuthorized = true;
+                closePasswordModal();
+                toggleConfigPanel();
+                showToast("Acceso concedido correctamente", "success");
+            } else {
+                showToast("Contraseña incorrecta. Inténtalo de nuevo.", "error");
+            }
         }
 
         // --- MANEJO DEL PANEL DE CONFIGURACIÓN ---
         function toggleConfigPanel() {
             const panel = document.getElementById('configPanel');
             panel.classList.toggle('hidden');
+            if (!panel.classList.contains('hidden')) {
+                document.body.classList.add('modal-active');
+            } else {
+                document.body.classList.remove('modal-active');
+            }
         }
 
         function saveAdvisorConfig() {
             const nameInput = document.getElementById('inputAdvisorName').value.trim();
             const phoneInput = document.getElementById('inputAdvisorPhone').value.trim().replace(/\s+/g, '').replace('+', '');
+            const newPasswordInput = document.getElementById('inputAdvisorPassword').value.trim();
 
             if (!nameInput || !phoneInput) {
-                showToast("Por favor, llena todos los campos.", "error");
+                showToast("Por favor, completa los campos obligatorios.", "error");
                 return;
             }
 
+            // Guardar nombre y número de teléfono
             localStorage.setItem('advisor_name', nameInput);
             localStorage.setItem('advisor_phone', phoneInput);
-
             currentAdvisor.name = nameInput;
             currentAdvisor.phone = phoneInput;
 
+            // Actualizar contraseña si se escribió una nueva
+            if (newPasswordInput.length > 0) {
+                if (newPasswordInput.length < 4) {
+                    showToast("La contraseña debe tener al menos 4 caracteres.", "error");
+                    return;
+                }
+                localStorage.setItem('advisor_password', newPasswordInput);
+                currentAdvisor.password = newPasswordInput;
+            }
+
             setupAdvisorDisplay();
             toggleConfigPanel();
-            showToast("Configuración guardada. ¡Ahora la página vende por ti!", "success");
+            showToast("Configuración guardada exitosamente.", "success");
         }
 
         // --- CONTROL DEL MODAL DE DIPLOMADOS ---
@@ -824,7 +912,7 @@
             }
 
             // Mensaje estructurado de ventas para WhatsApp
-            const message = `Hola ${currentAdvisor.name},\n\nMi nombre es *${leadName}* y me encuentro muy interesado en cursar el *Diplomado en ${diplomadoName}* de la convocatoria actual. \n\nMe gustaría conocer más sobre:\n• Plan de estudios y horarios\n• Costos y opciones de pago\n• Si aplico para la beca de lanzamiento.\n\nMi correo registrado es: *${leadEmail}*.\n\n¡Quedo a la espera de tu respuesta para iniciar mi proceso!`;
+            const message = `Hola ${currentAdvisor.name},\n\nMi nombre es *${leadName}* y me encuentro muy interesado en cursar el *Diplomado en ${diplomadoName}* en Corporativo Riec. \n\nMe gustaría conocer más sobre:\n• Plan de estudios y horarios\n• Costos y opciones de pago\n• Si aplico para la beca de lanzamiento.\n\nMi correo registrado es: *${leadEmail}*.\n\n¡Quedo a la espera de tu respuesta para iniciar mi proceso!`;
 
             // Construir enlace de WhatsApp con API oficial
             const whatsappUrl = `https://api.whatsapp.com/send?phone=${currentAdvisor.phone}&text=${encodeURIComponent(message)}`;
@@ -851,7 +939,7 @@
         }
 
         function contactAdvisorGeneral() {
-            const message = `Hola ${currentAdvisor.name},\n\nHe estado revisando la oferta educativa de diplomados elite en tu sitio web y me gustaría recibir asesoría general sobre los inicios de clase vigentes. \n\n¡Muchas gracias!`;
+            const message = `Hola ${currentAdvisor.name},\n\nHe estado revisando la oferta educativa de diplomados de Corporativo Riec en tu sitio web y me gustaría recibir asesoría general sobre los inicios de clase vigentes. \n\n¡Muchas gracias!`;
             const whatsappUrl = `https://api.whatsapp.com/send?phone=${currentAdvisor.phone}&text=${encodeURIComponent(message)}`;
             
             showToast("Redirigiendo a WhatsApp...", "success");
